@@ -1,7 +1,9 @@
 from tkinter import CASCADE
 from django.conf import settings
+from django.forms import CharField
 from colorfield.fields import ColorField
 from django.db import models
+
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 
@@ -66,3 +68,102 @@ class Material(models.Model):
     class Meta:
         verbose_name = 'Материал'
         verbose_name_plural = 'Материалы'
+
+
+    
+
+
+#Модель мебели
+class Mebel(models.Model):
+    title = models.CharField('Название',max_length=100)   
+    text = models.TextField('Описание')
+    created_date = models.DateTimeField(default=timezone.now)
+    width = models.FloatField('Ширина',default = 0)
+    height = models.FloatField('Вісота',default = 0)
+    depth = models.FloatField('Глубина',default = 0)
+    visible = models.BooleanField('Видимая',default = False)
+    
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+    
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name = 'Модель'
+        verbose_name_plural = 'Модели'
+
+#Модель соответствия материалов
+class MaterialEqual(models.Model):
+    mebel = models.ForeignKey(Mebel,on_delete = models.CASCADE, default=1)
+    materialName = models.CharField('Материал',max_length=100, default='')  
+    materialId = models.ForeignKey(Material,on_delete = models.CASCADE, default=1)
+    
+    
+    def __str__(self):
+        return self.materialName
+    
+    class Meta:
+        verbose_name = 'Материал панели'
+        verbose_name_plural = 'Материал панелей'
+
+        
+# Модель панелей
+class Panels(models.Model):
+    title = models.CharField('Название',max_length=100) 
+    material = models.CharField('Материал',max_length=100, default='') 
+    materialId = models.ForeignKey(Material, on_delete=models.CASCADE, default=1)
+    mebel = models.ForeignKey(Mebel, on_delete = models.CASCADE, default=1)
+    thickness = models.FloatField(default=0)
+    posx = models.FloatField(default=0)
+    posy = models.FloatField(default=0)
+    posz = models.FloatField(default=0)
+    rotx = models.FloatField(default=0)
+    roty = models.FloatField(default=0)
+    rotz = models.FloatField(default=0)
+    rotw = models.FloatField(default=0)
+    texture = models.IntegerField(default=0)
+     
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name = 'Панель'
+        verbose_name_plural = 'Панели' 
+    
+class Contours(models.Model):
+    type = models.IntegerField(default=1)
+    panel = models.ForeignKey(Panels, on_delete = models.CASCADE, default=1)
+    pos1x = models.FloatField(default=0)
+    pos2x = models.FloatField(default=0)
+    pos1y = models.FloatField(default=0)
+    pos2y = models.FloatField(default=0)
+    centerx = models.FloatField(default=0)
+    centery = models.FloatField(default=0)
+    radius = models.FloatField(default=0)
+    start_angle = models.FloatField(default=0)
+    end_angle = models.FloatField(default=0)
+    arc_dir = models.BooleanField(default = False)
+    
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name = 'Контур'
+        verbose_name_plural = 'Контурі' 
+    
+    
+#Файлы импорта
+class file_import(models.Model):
+    file = models.FileField('Файл',upload_to ='files_import')
+    
+    
+    class Meta:
+        verbose_name = 'Файл импорта'
+        verbose_name_plural = 'Файлы импорта'
+    
+        
+
+
+    

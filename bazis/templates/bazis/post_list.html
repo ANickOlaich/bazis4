@@ -8,7 +8,7 @@
     <div class="card">
         <img class="card-img-top" src="{% static 'images/park.jpg' %}" alt="Card image cap">
         <div class="card-body">
-          <h5 class="card-title">{{ post.title }}</h5>
+          <h5 class="card-title"><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h5>
           <p class="card-text">{{ post.text|linebreaksbr }}</p>
         </div>
         <div class="card-footer">
