@@ -79,8 +79,6 @@ def post_detail(request, pk):
         #print(map)
         m.append({
             'id':           mat.id,
-            'alphaMap':     mat.alphaMap,
-            'color':        mat.color,    
             'metalness':    mat.metalness,
             'roughness':    mat.roughness,
             'map':          mat.map.mtexture.url,

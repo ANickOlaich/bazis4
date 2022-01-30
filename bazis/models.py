@@ -56,8 +56,6 @@ class MaterialType(models.Model):
 # Материал для three.js
 class Material(models.Model):
     title = models.CharField('Название',max_length=1000)
-    alphaMap = ColorField('Непрозрачность',default='#FFFFFF')
-    color = ColorField('Цвет',default='#999999')
     metalness = models.FloatField('Метал',default=0.5)
     roughness = models.FloatField('Шероховатость',default=0.5) #Шерохотатость 0-зеркало 1- полностью рассеяный
     map = models.ForeignKey(Texture, on_delete = models.CASCADE) # Текстура
