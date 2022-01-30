@@ -1,0 +1,78 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script src="{% static 'js/three.js' %}"></script>
+{% endblock %}
+{% block form_top %}
+    {{ lame_static_text }}
+    
+        <div style="width:200%">
+        <canvas id="canvas" style="width:200% height:300px">Канва</canvas>
+        </div>
+    
+    <script>var url = "{% static 'texture/ph18113.jpg' %}";</script>
+  
+    <script src="{% static 'js/three.js' %}"></script>
+    <script>
+
+        const canvas = document.querySelector('#canvas');
+        
+    const renderer = new THREE.WebGLRenderer({canvas});
+    var width = canvas.width;
+    var height = canvas.height;
+    renderer.setSize (width, height);
+    renderer.setClearColor( 0xEEEEEE );
+    renderer.shadowMap.type = THREE.PCFShadowMap
+    //renderer.shadowMap.enabled=true;    
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera( 75, width/ height, 0.1, 10 );
+
+        
+        //document.body.appendChild( renderer.domElement );
+
+        const geometry = new THREE.BoxGeometry(4,4,4);
+
+        //Материал ДСП
+        var texture = new THREE.TextureLoader().load( url );
+        console.log(texture)
+        const material = new THREE.MeshStandardMaterial({
+          //color: 0xCCCCCC,
+          side: THREE.DoubleSide,
+          map: texture // texture as a map for material
+        }); 
+        //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+
+        const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+        scene.add( light );
+        const directionalLight = new THREE.SpotLight( 0xffffff );
+        directionalLight.position.set(0,0,1000)
+        scene.add( directionalLight );
+        const cube = new THREE.Mesh( geometry, material );
+        scene.add( cube );
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame( animate );
+
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            renderer.render( scene, camera );
+        };
+
+        window.onload = function() {
+            let elem=document.getElementById("id_map")
+            var val = elem.options[elem.selectedIndex].text;
+            console.log(val)
+            url = "{% static 'texture/' %}"+val
+            console.log(url)
+            
+         };
+
+        animate();
+    </script>
+{% endblock %}

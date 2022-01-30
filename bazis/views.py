@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from .models import Mebel, Panels, Contours
+from .models import Mebel, Panels, Contours,MaterialEqual, Material,Size
 
 import json
 
@@ -18,6 +18,22 @@ def post_detail(request, pk):
     mebelView['depth']=meb.depth
     mebelView['height']=meb.height
     mebelView['width']=meb.width
+    siz = Size.objects.filter(mebel=meb)
+    s=[]
+    for oneSize in siz:
+        s.append({  
+                        'value'        :oneSize.value,
+                        'size'         :oneSize.size,
+                        'length'       :oneSize.length,        
+                        'posx'         :oneSize.posx,
+                        'posy'         :oneSize.posy,
+                        'posz'         :oneSize.posz,
+                        'rotx'         :oneSize.rotx,
+                        'roty'         :oneSize.roty,
+                        'rotz'         :oneSize.rotz,
+                        'rotw'         :oneSize.rotw,
+        })
+    mebelView['size']=s
     pan=Panels.objects.filter(mebel=meb)
     d=[]
     for p in pan:
@@ -39,7 +55,7 @@ def post_detail(request, pk):
                         })
         d.append({
                         'title':p.title,
-                        'material'     :p.material,  
+                        'material'     :p.materialId.id,  
                         'thickness'    :p.thickness,
                         'posx'         :p.posx,
                         'posy'         :p.posy,
@@ -52,6 +68,25 @@ def post_detail(request, pk):
                         'contour'      :pc
             })
     mebelView['panels']=d
+    materialsInModel = MaterialEqual.objects.filter(mebel=meb)
+    m=[]
+    for matEq in materialsInModel:
+        print(matEq.materialId.id)
+        mat=Material.objects.get(id=matEq.materialId.id)
+        print(mat)
+        print('///////////////////////////////')
+        #map=Material.objects.get(id=mat.id)
+        #print(map)
+        m.append({
+            'id':           mat.id,
+            'alphaMap':     mat.alphaMap,
+            'color':        mat.color,    
+            'metalness':    mat.metalness,
+            'roughness':    mat.roughness,
+            'map':          mat.map.mtexture.url,
+        })
+    print(m)
+    mebelView['materials'] = m
     return render(request, 'bazis/post_detail.html', {'post': post, 'mebelView':json.dumps(mebelView)})
 
 def about(request):

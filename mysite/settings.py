@@ -80,9 +80,11 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db4.sqlite3',
+        'NAME': BASE_DIR / 'db11.sqlite3',
     }
 }
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 
 # Password validation

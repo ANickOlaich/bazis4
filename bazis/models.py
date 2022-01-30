@@ -23,13 +23,15 @@ class Post(models.Model):
         return self.title
 
 # Текстуры
+
+
 class Texture(models.Model):
-    title = models.CharField('Название',max_length=50, default='default.jpg')
-    mtexture = models.ImageField(upload_to ='bazis/static/texture/', default='default.jpg')
+    title = models.CharField('Название',max_length=1000, default='default.jpg')
+    mtexture = models.ImageField(upload_to ='texture', default='default.jpg')
     @property
     def thumbnail_preview(self):
         if self.mtexture:
-            return mark_safe('<img src="{}" width="300" height="300" />'.format(self.mtexture.url))
+            return mark_safe('<img src="{}" width="200" height="200" />'.format(self.mtexture.url))
         return ""
     
     def __str__(self):
@@ -53,7 +55,7 @@ class MaterialType(models.Model):
 
 # Материал для three.js
 class Material(models.Model):
-    title = models.CharField('Название',max_length=100)
+    title = models.CharField('Название',max_length=1000)
     alphaMap = ColorField('Непрозрачность',default='#FFFFFF')
     color = ColorField('Цвет',default='#999999')
     metalness = models.FloatField('Метал',default=0.5)
@@ -97,7 +99,7 @@ class Mebel(models.Model):
 #Модель соответствия материалов
 class MaterialEqual(models.Model):
     mebel = models.ForeignKey(Mebel,on_delete = models.CASCADE, default=1)
-    materialName = models.CharField('Материал',max_length=100, default='')  
+    materialName = models.CharField('Материал',max_length=1000, default='')  
     materialId = models.ForeignKey(Material,on_delete = models.CASCADE, default=1)
     
     
@@ -108,14 +110,11 @@ class MaterialEqual(models.Model):
         verbose_name = 'Материал панели'
         verbose_name_plural = 'Материал панелей'
 
-        
-# Модель панелей
-class Panels(models.Model):
-    title = models.CharField('Название',max_length=100) 
-    material = models.CharField('Материал',max_length=100, default='') 
-    materialId = models.ForeignKey(Material, on_delete=models.CASCADE, default=1)
-    mebel = models.ForeignKey(Mebel, on_delete = models.CASCADE, default=1)
-    thickness = models.FloatField(default=0)
+# Модель размеров
+class Size(models.Model):
+    value = models.FloatField(default=0)
+    size = models.FloatField(default=0)
+    length = models.FloatField(default=0)
     posx = models.FloatField(default=0)
     posy = models.FloatField(default=0)
     posz = models.FloatField(default=0)
@@ -123,7 +122,27 @@ class Panels(models.Model):
     roty = models.FloatField(default=0)
     rotz = models.FloatField(default=0)
     rotw = models.FloatField(default=0)
-    texture = models.IntegerField(default=0)
+    mebel = models.ForeignKey(Mebel, on_delete = models.CASCADE, null=True)
+    
+        
+# Модель панелей
+class Panels(models.Model):
+    pos = models.IntegerField('Номер',default=0)
+    title = models.CharField('Название',max_length=100) 
+    material = models.CharField('Материал Базиса',max_length=1000, default='') 
+    materialId = models.ForeignKey(Material, on_delete=models.CASCADE, default=1)
+    mebel = models.ForeignKey(Mebel, on_delete = models.CASCADE, null=True)
+    thickness = models.FloatField('Толщина',default=0)
+    width = models.FloatField('Ширина',default=0)
+    height = models.FloatField('Длина',default=0)
+    posx = models.FloatField(default=0)
+    posy = models.FloatField(default=0)
+    posz = models.FloatField(default=0)
+    rotx = models.FloatField(default=0)
+    roty = models.FloatField(default=0)
+    rotz = models.FloatField(default=0)
+    rotw = models.FloatField(default=0)
+    texture = models.IntegerField('Направление текстуры',default=0)
      
     def __str__(self):
         return self.title
@@ -131,6 +150,7 @@ class Panels(models.Model):
     class Meta:
         verbose_name = 'Панель'
         verbose_name_plural = 'Панели' 
+
     
 class Contours(models.Model):
     type = models.IntegerField(default=1)
@@ -146,8 +166,7 @@ class Contours(models.Model):
     end_angle = models.FloatField(default=0)
     arc_dir = models.BooleanField(default = False)
     
-    def __str__(self):
-        return self.title
+    
     
     class Meta:
         verbose_name = 'Контур'
